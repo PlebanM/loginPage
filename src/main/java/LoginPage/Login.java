@@ -12,7 +12,6 @@ import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 
 import java.io.*;
-import java.net.HttpCookie;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -38,9 +37,9 @@ public class Login implements HttpHandler {
            try {
                Optional<LoginUser> user = session.getUserOfSession(httpExchange);
                if(user.isPresent()){
-                   redirectToResourcePage(httpExchange,createLogoutPage(user.get().getLogin()));
+                   redirectToResourcesPage(httpExchange,createLogoutPage(user.get().getLogin()));
                }else{
-                   redirectToResourcePage(httpExchange, createLoginPage());
+                   redirectToResourcesPage(httpExchange, createLoginPage());
                }
            } catch (DaoException e) {
                e.printStackTrace();
@@ -53,12 +52,9 @@ public class Login implements HttpHandler {
             try {
                 Optional<LoginUser> user = loginDao.checkIfUserAndPasswordCorrect(userFromForm.get());
                 if(user.isPresent()){
-                    HttpCookie cookie = loginCookieHelper.createSessionNumber();
-                    loginDao.addSessionIdToUser(user.get(), cookie);
-                    httpExchange.getResponseHeaders().set("Set-Cookie", cookie.toString());
-                    redirectToResourcePage(httpExchange, createLogoutPage(user.get().getLogin()));
+                    loginCookieHelper.createCookie(httpExchange, user);
                 }else{
-                    redirectToResourcePage(httpExchange, createLoginPage());
+                    redirectToResourcesPage(httpExchange, createLoginPage());
                 }
             } catch (DaoException e) {
                 e.printStackTrace();
@@ -83,17 +79,18 @@ public class Login implements HttpHandler {
         JtwigTemplate template = JtwigTemplate.classpathTemplate("static/logout.twig");
         JtwigModel model = JtwigModel.newModel();
         model.with("login", login);
-        String resource = template.render(model);
-        return resource;
+        return template.render(model);
 
     }
 
-    private void redirectToResourcePage(HttpExchange httpExchange, String resource) throws IOException {
+    private void redirectToResourcesPage(HttpExchange httpExchange, String resource) throws IOException {
         httpExchange.sendResponseHeaders(200,resource.length());
         OutputStream os = httpExchange.getResponseBody();
         os.write(resource.getBytes());
         os.close();
     }
+
+
 
     private Optional<LoginUser> getDataFromForm(HttpExchange exchange) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
