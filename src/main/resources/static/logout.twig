@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout</title>
+    <link href="/static/stylesheets/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="/static/scripts/jquery-1.11.1.js"></script>
+    <script src="/static/scripts/bootstrap.min.js"></script>
+    <script src="/static/scripts/script.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/stylesheets/main.css">
+
+</head>
+<body>
+<section id="login">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-wrap">
+                    <h1>Hello {{ login }}!</h1>
+                    <form role="form" action="/logout" method="POST" id="login-form" >
+                        <input type="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Log out" />
+                    </form>
+                    <hr>
+                </div>
+            </div> <!-- /.col-xs-12 -->
+        </div> <!-- /.row -->
+    </div> <!-- /.container -->
+</section>
+</body>
+</html>
