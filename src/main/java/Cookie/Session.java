@@ -1,7 +1,7 @@
 package Cookie;
 
 import DAO.DaoException;
-import DAO.LoginDao;
+import DAO.SessionsDao;
 import Model.LoginUser;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -10,18 +10,18 @@ import java.util.Optional;
 
 public class Session {
 
-    private LoginDao loginDao;
+    private SessionsDao sessionsDao;
     private LoginCookieHelper cookieHelper;
 
-    public Session(LoginDao loginDao, LoginCookieHelper cookieHelper){
-        this.loginDao = loginDao;
+    public Session(SessionsDao sessionsDao, LoginCookieHelper cookieHelper){
+        this.sessionsDao = sessionsDao;
         this.cookieHelper = cookieHelper;
     }
 
     public Optional<LoginUser> getUserOfSession(HttpExchange exchange) throws DaoException {
         Optional<HttpCookie> cookie = cookieHelper.getSessionIdCookie(exchange);
         if (cookie.isPresent()){
-            return loginDao.getUserBySessionId(cookieHelper.deleteQuotesFromCookieValue(cookie.get().getValue()));
+            return sessionsDao.getUserOfSession(cookieHelper.deleteQuotesFromCookieValue(cookie.get().getValue()));
         }else{
             return Optional.empty();
         }

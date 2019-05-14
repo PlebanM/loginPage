@@ -1,5 +1,6 @@
 import Cookie.LoginCookieHelper;
 import DAO.LoginDao;
+import DAO.SessionsDao;
 import LoginPage.Login;
 import LoginPage.Logout;
 import com.sun.net.httpserver.HttpServer;
@@ -13,7 +14,7 @@ public class Main {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/static", new Static());
         server.createContext("/login", new Login(new LoginCookieHelper(), new LoginDao()));
-        server.createContext("/logout", new Logout(new LoginDao()));
+        server.createContext("/logout", new Logout(new SessionsDao()));
 
         server.setExecutor(null); // creates a default executor
         server.start();

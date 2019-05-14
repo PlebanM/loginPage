@@ -2,6 +2,7 @@ package Cookie;
 
 import DAO.DaoException;
 import DAO.LoginDao;
+import DAO.SessionsDao;
 import Model.LoginUser;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -13,11 +14,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class LoginCookieHelper {
-    private LoginDao loginDao;
+    private SessionsDao sessionsDao;
     private static final String SESSION_COOKIE_NAME = "sessionId";
 
     public LoginCookieHelper() {
-        this.loginDao = new LoginDao();
+        this.sessionsDao = new SessionsDao();
     }
 
     private HttpCookie createSessionNumber(){
@@ -33,7 +34,8 @@ public class LoginCookieHelper {
 
     public void createCookie(HttpExchange httpExchange, Optional<LoginUser> user) throws DaoException {
         HttpCookie cookie = createSessionNumber();
-        loginDao.addSessionIdToUser(user.get(), cookie);
+        sessionsDao.saveSession(user.get(),cookie);
+
         httpExchange.getResponseHeaders().set("Set-Cookie", cookie.toString());
         redirectToResourcePage(httpExchange);
     }

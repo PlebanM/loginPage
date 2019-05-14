@@ -2,7 +2,7 @@ package LoginPage;
 
 import Cookie.LoginCookieHelper;
 import DAO.DaoException;
-import DAO.LoginDao;
+import DAO.SessionsDao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -13,10 +13,10 @@ import java.util.Optional;
 
 public class Logout implements HttpHandler {
     private LoginCookieHelper loginCookieHelper = new LoginCookieHelper();
-    private LoginDao loginDao;
+    private SessionsDao sessionsDao;
 
-    public Logout(LoginDao loginDao) {
-        this.loginDao = loginDao;
+    public Logout(SessionsDao sessionsDao) {
+        this.sessionsDao = sessionsDao;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class Logout implements HttpHandler {
         Optional<HttpCookie> cookie = loginCookieHelper.getSessionIdCookie(exchange);
         if (cookie.isPresent()){
             try {
-                loginDao.deleteUserSessionId(loginCookieHelper.deleteQuotesFromCookieValue(cookie.get().getValue()));
+                sessionsDao.deleteSessionCookie(loginCookieHelper.deleteQuotesFromCookieValue(cookie.get().getValue()));
             }catch (DaoException ex){
                 ex.printStackTrace();
             }

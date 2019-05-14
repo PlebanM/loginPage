@@ -5,6 +5,7 @@ import Cookie.LoginCookieHelper;
 import Cookie.Session;
 import DAO.DaoException;
 import DAO.LoginDao;
+import DAO.SessionsDao;
 import Model.LoginUser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -25,9 +26,8 @@ public class Login implements HttpHandler {
 
     public Login(LoginCookieHelper loginCookieHelper, LoginDao loginDao) {
         this.loginCookieHelper = loginCookieHelper;
+        this.session = new Session(new SessionsDao(),loginCookieHelper);
         this.loginDao = loginDao;
-        this.session = new Session(loginDao,loginCookieHelper);
-
     }
 
 
